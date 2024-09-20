@@ -7,7 +7,6 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
-	"github.com/spf13/cobra"
 	// "github.com/cosmos/cosmos-sdk/store/types"
 )
 
@@ -20,7 +19,6 @@ type PrivilegeI interface {
 	RegisterInterfaces(registry cdctypes.InterfaceRegistry)
 	MsgHandler() MsgHandler
 	QueryHandler() QueryHandler
-	CLI() *cobra.Command
 }
 
 type MsgHandler func(context context.Context, privStore storetypes.KVStore, msg proto.Message, tokenID string, privAcc sdk.AccAddress) (proto.Message, error)

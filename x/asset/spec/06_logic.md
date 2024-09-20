@@ -32,12 +32,11 @@ type Privilege interface {
     RegisterInterfaces()
     MsgHandler() MsgHandler
     QueryHandler() QueryHandler
-    CLI() *cobra.Command
 }
 
-type MsgHandler func(context Context, privMsg PrivilegeMsg) error
+type MsgHandler func(context Context, privMsg PrivilegeMsg, tokenID string, privAcc sdk.AccAddress) error
 
-type QueryHandler func(context Context, privQuery PrivilegeQuery) error
+type QueryHandler func(context Context, privQuery PrivilegeQuery, tokenID string) error
 ```
 
 This interface provides all the functionality necessary for a privilege, including a message handler, query handler and cli
@@ -45,6 +44,12 @@ This interface provides all the functionality necessary for a privilege, includi
 All the `PrivilegeMsg` of a privilege should return the name of that privilege when called `NeedPrivilege()`. A message handler should handle all the `PrivilegeMsg` of that privilege.
 
 When adding a `Privilege`, we calls `PrivilegeManager.AddPrivilege()` in `app.go` which inturn maps all the `PrivilegeMsg` of that privilege to its `MsgHandler`. This mapping logic will later be used when running a `MsgExecutePrivilege`
+
+## Privilege send restriction
+
+In case when a privilege wants to enforce a specific send restriction logic, it can define the restriction logic and register that logic by implementing `RestrictionChecker` interface.
+
+The restriction logic will be triggered for an token transfer only if the token has enabled the privilege with such restriction logic. For example, any transfer of the token RIO (with transfer auth privilege enabled) will trigger `transfer auth privilege`'s send restriction logic.
 
 ## Flow of MsgExecutePrivilege
 
@@ -58,6 +63,5 @@ Validation:
 
 Flow:
 
-- Prepare store for the privilege of the token via `MakePrivilegeStore(privilege name, token denom)`. That store is the only store accessable by the privilege's `MsgHandler`.
 - `PrivilegeManager` routes the `PrivilegeMsg` to the its `MsgHandler`.
 - `MsgHandler` now handles the `PrivilegeMsg`.

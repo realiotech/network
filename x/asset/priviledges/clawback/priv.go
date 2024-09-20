@@ -1,4 +1,4 @@
-package mint
+package clawback
 
 import (
 	"context"
@@ -8,29 +8,29 @@ import (
 	assettypes "github.com/realiotech/realio-network/x/asset/types"
 )
 
-const priv_name = "mint"
+const priv_name = "clawback"
 
-type MintPriviledge struct {
+type ClawbackPriviledge struct {
 	bk BankKeeper
 }
 
-func NewMintPriviledge(bk BankKeeper) MintPriviledge {
-	return MintPriviledge{
+func NewClawbackPriviledge(bk BankKeeper) ClawbackPriviledge {
+	return ClawbackPriviledge{
 		bk: bk,
 	}
 }
 
-func (mp MintPriviledge) Name() string {
+func (cp ClawbackPriviledge) Name() string {
 	return priv_name
 }
 
-func (mp MintPriviledge) RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
+func (cp ClawbackPriviledge) RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*assettypes.PrivilegeMsgI)(nil),
-		&MsgMintToken{},
+		&MsgClawbackToken{},
 	)
 }
 
-func (mp MintPriviledge) QueryHandler() assettypes.QueryHandler {
+func (cb ClawbackPriviledge) QueryHandler() assettypes.QueryHandler {
 	return func(context context.Context, privQuery proto.Message, tokenID string) (proto.Message, error) {
 		return nil, nil
 	}
